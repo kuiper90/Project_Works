@@ -12,7 +12,7 @@ namespace Works
         {
             object obj = element;
             base.Add(obj);
-        }
+        }        
 
         public new int this[int index]
         {
@@ -20,15 +20,7 @@ namespace Works
             set => base.obj[index] = value;
         }
 
-        public bool Contains(int element)
-        {   
-            for (int i = 0; i < this.Count; i++)
-            {
-                if ((int)this.obj[i] == element)
-                    return true;
-            }
-            return false;
-        }
+        public bool Contains(int element) => IndexOf(element) >= 0;
 
         public int IndexOf(int element)
         {

@@ -20,7 +20,7 @@ namespace Works
             this.Count++;
         }
 
-        public void IncreaseSizeIfArrayIsFull(int value)
+        private void IncreaseSizeIfArrayIsFull(int value)
         {
             if (this.Count + 1 > capacity)
             {
@@ -30,6 +30,8 @@ namespace Works
             }
         }
 
+        private bool IsValidIndex(int index) => 0 <= index && index < this.Count;
+
         public int Count { get; set; } = 0;
         
         public int this[int index]
@@ -38,15 +40,7 @@ namespace Works
             set => array[index] = value;
         }
 
-        public bool Contains(int element)
-        {
-            for (int i = 0; i < this.Count; i++)
-            {
-                if (this.array[i] == element)
-                    return true;
-            }
-            return false;
-        }
+        public bool Contains(int element) => IndexOf(element) >= 0;
 
         public int IndexOf(int element)
         {
@@ -75,29 +69,23 @@ namespace Works
             this.Count = 0;
         }
 
-        public void ShiftLeft(int index)
+        private void ShiftLeft(int index)
         {
-            for (int i = index; i < this.Count; i++)
-                this.array[i] = array[i + 1];
+            if (!IsValidIndex(index))
+                throw new IndexOutOfRangeException("Invalid index: {0} " + index);
+            Array.Copy(this.array, index + 1, this.array, index, this.Count - index);
             this.Count--;
         }
 
         public void Remove(int element)
         {
-            int i = 0;
-
-            while ((i < this.Count) && (this.array[i] != element))
-            {
-                i++;
-            }
-            if (i == this.Count)
-                return;
-            ShiftLeft(i);
+            RemoveAt(IndexOf(element));
         }
 
         public void RemoveAt(int index)
         {
-            ShiftLeft(index);
+            if (IsValidIndex(index))
+                ShiftLeft(index);
         }
     }
 }

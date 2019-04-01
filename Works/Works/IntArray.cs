@@ -21,7 +21,7 @@ namespace Works
             this.count++;
         }
 
-        public void IncreaseSizeIfArrayIsFull(int value)
+        private void IncreaseSizeIfArrayIsFull(int value)
         {
             if (this.count + 1 > capacity)
             {
@@ -32,6 +32,8 @@ namespace Works
         }
 
         public int Count() => this.count;
+
+        private bool IsValidIndex(int index) => 0 <= index && index < this.count;
         
         public int Element(int index)
         {
@@ -39,8 +41,6 @@ namespace Works
                 throw new IndexOutOfRangeException("Invalid index: {0} " + index);
             return this.array[index];
         }
-
-        private bool IsValidIndex(int index) => 0 <= index && index < this.count;
 
         public void SetElement(int index, int element)
         {
@@ -63,8 +63,8 @@ namespace Works
         }
 
         public void Insert(int index, int element)
-        {
-            if (index > this.count || index < 0)
+        {   
+            if (!IsValidIndex(index))
                 throw new IndexOutOfRangeException("Invalid index: {0} " + index);
             IncreaseSizeIfArrayIsFull(this.count - index);
             Array.Copy(this.array, index, this.array, index + 1, this.count - index);
@@ -76,11 +76,11 @@ namespace Works
             this.count = 0;
         }
 
-        public void ShiftLeft(int index)
+        private void ShiftLeft(int index)
         {
-            //Array.Copy(this.array, index, this.array, index - 1, this.count - index);
-            for (int i = index; i < this.count; i++)
-                this.array[i] = array[i + 1];
+            if (!IsValidIndex(index))
+                throw new IndexOutOfRangeException("Invalid index: {0} " + index);
+            Array.Copy(this.array, index + 1, this.array, index, this.count - index);
             this.count--;
         }
 

@@ -21,7 +21,7 @@ namespace Works
             this.Count++;
         }
 
-        public void IncreaseSizeIfArrayIsFull(int value)
+        private void IncreaseSizeIfArrayIsFull(int value)
         {
             if (this.Count + 1 > capacity)
             {
@@ -92,7 +92,7 @@ namespace Works
             this.Count = 0;
         }
 
-        public void ShiftLeft(int index)
+        private void ShiftLeft(int index)
         {
             for (int i = index; i < this.Count; i++)
                 this.array[i] = array[i + 1];

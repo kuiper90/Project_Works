@@ -16,5 +16,16 @@ namespace Works
                 index++;
             base.Insert(index, element);
         }
+
+        public new void Insert(int index, T element)
+        {
+            base.Insert(index, element);
+            Array.Sort(base.obj);
+        }
+
+        public new T this[int index]
+        {
+            set { Add(value); }
+        }
     }
 }
