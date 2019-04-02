@@ -67,6 +67,14 @@ namespace Works
             IncreaseSizeIfArrayIsFull(this.Count - index);
             Array.Copy(this.obj, index, this.obj, index + 1, this.Count - index);
             this.obj[index] = element;
+            this.Count++;
+        }
+
+        public static void Swap<U>(ref U a, ref U b)
+        {
+            U temp = a;
+            a = b;
+            b = temp;
         }
 
         public void Clear()

@@ -44,7 +44,7 @@ namespace UnitTest_Works
         public void ShouldBe_False_DifferentIntegersNotEqual()
         {
             Lists_version2<string> arr = ArrayFactory();
-            Assert.False(Equals("1", "2"));
+            Assert.False(Lists_version2<string>.Equals("1", "2"));
         }
 
         [Fact]
@@ -66,6 +66,60 @@ namespace UnitTest_Works
         {
             Lists_version2<string> arr = ArrayFactory();
             Assert.True(arr.IndexOf("1") == 0);
+        }
+
+        [Fact]
+        public void ShouldBe_True_AddElement()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            arr.Add("-1");
+            Assert.True(arr[arr.Count - 1] == "-1");
+        }
+
+        [Fact]
+        public void ShouldBe_True_ClearArray()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            arr.Clear();
+            Assert.True(arr.Count == 0);
+        }
+
+        [Fact]
+        public void ShouldBe_True_InsertElement()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            arr.Insert(5, "16");
+            Assert.True(arr[4] == "5");
+            Assert.True(arr[5] == "16");
+            Assert.True(arr[6] == "6");
+        }
+
+        [Fact]
+        public void ShouldBe_True_SwapTwoStrings()
+        {
+            string str1 = "3";
+            string str2 = "5";
+            Lists_version2<string>.Swap<string>(ref str1, ref str2);
+            Assert.True(str1 == "5");
+            Assert.True(str2 == "3");
+        }
+
+        [Fact]
+        public void ShouldBe_True_RemoveElement()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            arr.Remove("3");
+            Assert.True(arr[1] == "2");
+            Assert.True(arr[2] == "4");
+        }
+
+        [Fact]
+        public void ShouldBe_True_RemoveElement_AtIndex()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            arr.RemoveAt(5);
+            Assert.True(arr[4] == "5");
+            Assert.True(arr[5] == "7");
         }
     }
 }
