@@ -23,11 +23,7 @@ namespace Works
         private void IncreaseSizeIfArrayIsFull(int value)
         {
             if (this.Count + 1 > this.array.Length)
-            {
-                int[] extendedArray = new int[this.array.Length + value];
-                Array.Copy(this.array, extendedArray, this.array.Length);
-                this.array = extendedArray;
-            }
+                Array.Resize(ref this.array, this.array.Length * 2);
         }
 
         private bool IsValidIndex(int index) => 0 <= index && index < this.Count;
