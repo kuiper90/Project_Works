@@ -29,15 +29,13 @@ namespace Works
             {
                 if ((int)this.obj[i] == (int)obj)
                     return i;
-                continue;
             }
             return -1;
         }
 
         //public bool Contains(int element)
         //{
-        //    object obj = element;
-        //    return base.Contains(obj);
+        //    return base.Contains(IndexOf(element));
         //}
 
         //public int IndexOf(int element)

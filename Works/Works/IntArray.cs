@@ -23,7 +23,7 @@ namespace Works
 
         private void IncreaseSizeIfArrayIsFull(int value)
         {
-            if (this.count + 1 > capacity)
+            if (this.count + 1 > this.array.Length)
             {
                 int[] extendedArray = new int[this.array.Length + value];
                 Array.Copy(this.array, extendedArray, capacity);
@@ -57,7 +57,6 @@ namespace Works
             {
                 if (this.array[i] == element)
                     return i;
-                continue;
             }
             return -1;
         }

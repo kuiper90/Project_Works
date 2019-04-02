@@ -31,10 +31,10 @@ namespace Works
 
         public void IncreaseSizeIfArrayIsFull(int value)
         {
-            if (this.Count + 1 > capacity)
+            if (this.Count + 1 > this.obj.Length)
             {
-                object[] extendedObj = new object[this.obj.Length + value];
-                Array.Copy(this.obj, extendedObj, capacity);
+                object[] extendedObj = new object[this.obj.Length * 2];
+                Array.Copy(this.obj, extendedObj, this.obj.Length);
                 this.obj = extendedObj;
             }
         }

@@ -23,7 +23,7 @@ namespace Works
 
         private void IncreaseSizeIfArrayIsFull(int value)
         {
-            if (this.Count + 1 > capacity)
+            if (this.Count + 1 > this.array.Length)
             {
                 int[] extendedArray = new int[this.array.Length + value];
                 Array.Copy(this.array, extendedArray, capacity);
@@ -38,19 +38,21 @@ namespace Works
         //    private set => this.count = value;
         //}
 
+        private bool IsValidIndex(int index) => 0 <= index && index < this.Count;
+
         public int this[int index]
         {
-            get { return ((index >= 0) || (index < this.Count)) ? array[index] : Char.MinValue; }
+            get { return (IsValidIndex(index)) ? array[index] : Char.MinValue; }
             set
             {
-                if ((index >= 0) || (index < this.Count))
+                if (IsValidIndex(index))
                     array[index] = value;
             }
         }
 
         public void SetElement(int index, int element)
         {
-            if (index > this.Count || index < 0)
+            if (!IsValidIndex(index))
                 throw new IndexOutOfRangeException("Invalid index: { 0} " + index);
             this.array[index] = element;
         }
@@ -71,7 +73,6 @@ namespace Works
             {
                 if (this.array[i] == element)
                     return i;
-                continue;
             }
             return -1;
         }
@@ -101,20 +102,13 @@ namespace Works
 
         public void Remove(int element)
         {
-            int i = 0;
-
-            while ((i < this.Count) && (this.array[i] != element))
-            {
-                i++;
-            }
-            if (i == this.Count)
-                return;
-            ShiftLeft(i);
+            RemoveAt(IndexOf(element));
         }
 
         public void RemoveAt(int index)
         {
-            ShiftLeft(index);
+            if (IsValidIndex(index))
+                ShiftLeft(index);
         }
     }
 }

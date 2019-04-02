@@ -55,6 +55,13 @@ namespace UnitTest_Works
         }
 
         [Fact]
+        public void ShouldBe_False_ArrayEmpty()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            Assert.False(arr.Contains(""));
+        }
+
+        [Fact]
         public void ShouldBe_True_IndexOfElement()
         {
             Lists_version2<string> arr = ArrayFactory();

@@ -36,10 +36,10 @@ namespace Works
 
         private void IncreaseSizeIfArrayIsFull(int value)
         {
-            if (this.Count + 1 > capacity)
+            if (this.Count + 1 > this.obj.Length)
             {
-                T[] extendedObj = new T[this.obj.Length + value];
-                Array.Copy(this.obj, extendedObj, capacity);
+                T[] extendedObj = new T[this.obj.Length * 2];
+                Array.Copy(this.obj, extendedObj, value);
                 this.obj = extendedObj;
             }
         }
@@ -62,7 +62,6 @@ namespace Works
             {
                 if (Equals(this.obj[i], element))
                     return i;
-                continue;
             }
             return -1;
         }

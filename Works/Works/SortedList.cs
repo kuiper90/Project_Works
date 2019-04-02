@@ -17,15 +17,46 @@ namespace Works
             base.Insert(index, element);
         }
 
-        public new void Insert(int index, T element)
+        private bool CheckIfSorted(int index, T element)
         {
-            base.Insert(index, element);
-            Array.Sort(base.obj);
+            if ((index == 0) && (obj[index + 1].CompareTo(element) < 0))
+                return false;
+            if ((index == base.Count - 1) && (obj[index - 1].CompareTo(element) > 0))
+                return false;
+            if ((obj[index - 1].CompareTo(element) > 0) || (obj[index + 1].CompareTo(element) < 0))
+                return false;
+            return true;
         }
+
+        public override void Insert(int index, T element)
+        {
+            if (!IsValidIndex(index))
+                throw new Exception("Invalid index.");
+            if (!CheckIfSorted(index, element))
+                throw new Exception("Inserting element would result in an unsorted list.");
+            base.Insert(index, element);
+        }
+        //    if (!IsValidIndex(index))
+        //      throw new IndexOutOfRangeException("Invalid index: {0} " + index);
+        //    if (index > 0)
+        //    {
+        //      if ((obj[index - 1].CompareTo(element) < 0) && (obj[index + 1].CompareTo(element) > 0))
+        //          base.Insert(index, element);
+        //      else
+        //          throw new Exception("Inserting element would result in an unsorted list.");
+        //    }
+        //    else if ((index == 0) && (obj[index + 1].CompareTo(element) > 0))
+        //      base.Insert(index, element);
 
         public new T this[int index]
         {
-            set { Add(value); }
+            set {
+                if (!IsValidIndex(index))
+                    throw new Exception("Invalid index.");
+                if (!CheckIfSorted(index, value))
+                    throw new Exception("Inserting element would result in an unsorted list.");
+                Add(value);
+            }
         }
     }
 }

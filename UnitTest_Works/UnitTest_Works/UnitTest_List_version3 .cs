@@ -3,7 +3,7 @@ using Xunit;
 
 namespace UnitTest_Works
 {
-    public class UnitTest_List_Version3
+    public class UnitTest_List_version3
     {
         public Lists_version3<string> ArrayFactory()
         {
@@ -59,6 +59,13 @@ namespace UnitTest_Works
         {
             Lists_version3<string> arr = ArrayFactory();
             Assert.True(arr.IndexOf("1") == 0);
+        }
+
+        [Fact]
+        public void ShouldBe_False_ArrayEmpty()
+        {
+            Lists_version3<string> arr = ArrayFactory();
+            Assert.False(arr.Contains(""));
         }
     }
 }

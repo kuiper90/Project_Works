@@ -34,15 +34,11 @@ namespace Works
 
         private void IncreaseSizeIfArrayIsFull(int value)
         {
-            if (this.Count + 1 > capacity)
-            {
-                T[] extendedObj = new T[this.obj.Length + value];
-                Array.Copy(this.obj, extendedObj, capacity);
-                this.obj = extendedObj;
-            }
+            if (this.Count + 1 > obj.Length)
+                Array.Resize(ref this.obj, this.obj.Length * 2);
         }
 
-        private bool IsValidIndex(int index) => 0 <= index && index < this.Count;
+        protected bool IsValidIndex(int index) => 0 <= index && index < this.Count;
 
         public int Count { get; set; } = 0;
 
@@ -60,12 +56,11 @@ namespace Works
             {
                 if (Equals(this.obj[i], element))
                     return i;
-                continue;
             }
             return -1;
         }
 
-        public void Insert(int index, T element)
+        public virtual void Insert(int index, T element)
         {
             if (index > this.Count || index < 0)
                 throw new IndexOutOfRangeException("Invalid index: {0} " + index);

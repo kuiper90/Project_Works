@@ -1,4 +1,4 @@
-﻿using System;
+﻿using Microsoft.CSharp;
 using System.Collections;
 using System.Reflection;
 
@@ -17,7 +17,7 @@ namespace Works
                 return false;
 
             var propertiesInfo = second.GetType().GetProperties();
-                        
+
             foreach (var value in propertiesInfo)
             {
                 //Prior to .NET 4.5 you need to pass null as a second argument
@@ -27,7 +27,7 @@ namespace Works
                 if (firstPropInfo == null && secondPropInfo == null)
                     continue;
 
-                if ((firstPropInfo is IList && value.PropertyType.IsGenericType) || 
+                if ((firstPropInfo is IList && value.PropertyType.IsGenericType) ||
                     (secondPropInfo is IList && value.PropertyType.IsGenericType))
                 {
                     dynamic one = firstPropInfo;

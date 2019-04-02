@@ -51,6 +51,13 @@ namespace UnitTest_Works
         }
 
         [Fact]
+        public void ShouldBe_False_ArrayEmpty()
+        {
+            IntArray_version4 arr = ArrayFactory();
+            Assert.False(arr.Contains(default(int)));
+        }
+
+        [Fact]
         public void ShouldBe_True_IndexOfElement()
         {
             IntArray_version4 arr = ArrayFactory();

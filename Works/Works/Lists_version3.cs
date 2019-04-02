@@ -7,7 +7,7 @@ namespace Works
     public class Lists_version3<T> : IList<T>, IReadOnlyList<T>
     {
         protected T[] obj;
-        private const int capacity = 4;
+        private int capacity = 4;
 
         public Lists_version3()
         {
@@ -34,8 +34,8 @@ namespace Works
 
         private void IncreaseSizeIfArrayIsFull(int value)
         {
-            if (this.Count + 1 > capacity)
-            {
+            if (this.Count + 1 > obj.Length)
+            {   
                 T[] extendedObj = new T[this.obj.Length + value];
                 Array.Copy(this.obj, extendedObj, capacity);
                 this.obj = extendedObj;
@@ -73,7 +73,6 @@ namespace Works
             {
                 if (Equals(this.obj[i], element))
                     return i;
-                continue;
             }
             return -1;
         }
