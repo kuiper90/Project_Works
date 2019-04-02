@@ -32,11 +32,7 @@ namespace Works
         public void IncreaseSizeIfArrayIsFull(int value)
         {
             if (this.Count + 1 > this.obj.Length)
-            {
-                object[] extendedObj = new object[this.obj.Length * 2];
-                Array.Copy(this.obj, extendedObj, this.obj.Length);
-                this.obj = extendedObj;
-            }
+                Array.Resize(ref this.obj, this.obj.Length * 2);
         }
 
         public int Count { get; set; } = 0;

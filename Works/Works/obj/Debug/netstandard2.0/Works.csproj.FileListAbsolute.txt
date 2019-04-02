@@ -6,3 +6,4 @@ D:\Git\Project_Works\Works\Works\obj\Debug\netstandard2.0\Works.AssemblyInfoInpu
 D:\Git\Project_Works\Works\Works\obj\Debug\netstandard2.0\Works.AssemblyInfo.cs
 D:\Git\Project_Works\Works\Works\obj\Debug\netstandard2.0\Works.dll
 D:\Git\Project_Works\Works\Works\obj\Debug\netstandard2.0\Works.pdb
+D:\Git\Project_Works\Works\Works\obj\Debug\netstandard2.0\Works.csprojAssemblyReference.cache
