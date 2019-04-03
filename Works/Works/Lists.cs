@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Works
 {
-    public class Lists<T> : IEnumerable<T>
+    public class Lists<T> : IList<T>
     {
         protected T[] obj;
         private const int capacity = 4;
@@ -41,6 +41,8 @@ namespace Works
         protected bool IsValidIndex(int index) => 0 <= index && index < this.Count;
 
         public int Count { get; set; } = 0;
+
+        public bool IsReadOnly { get; }
 
         public T this[int index]
         {
@@ -92,9 +94,16 @@ namespace Works
             this.Count--;
         }
 
-        public void Remove(T element)
+        public bool Remove(T element)
         {
-            RemoveAt(IndexOf(element));
+            int index = IndexOf(element);
+
+            if (IsValidIndex(index))
+            {
+                ShiftLeft(index);
+                return true;
+            }
+            return false;
         }
 
         public void RemoveAt(int index)
@@ -103,6 +112,18 @@ namespace Works
                 ShiftLeft(index);
         }
 
-        public static bool Equals(T one, T two) => one.Equals(two);        
+        public static bool Equals(T one, T two) => one.Equals(two);
+
+        public void CopyTo(T[] obj, int objIndex)
+        {
+            if (obj == null)
+                throw new ArgumentNullException("Array is null.");
+            if (objIndex < 0)
+                throw new ArgumentOutOfRangeException("Index is negative.");
+            if (obj.Length - objIndex < Count)
+                throw new ArgumentException("Not enough elements after index in the destination array.");
+            for (int i = 0; i < Count; ++i)
+                obj[i + objIndex] = this[i];
+        }
     }
 }

@@ -20,10 +20,9 @@ namespace Works
         }
 
         private bool CheckIfNullOrEmpty<T>(T element) => ((ReferenceEquals(element, "")) || (EqualityComparer<T>.Default.Equals(element, default(T))));
-            // => ((ReferenceEquals(element, null)) || (element.Equals("")));
 
         private bool CheckIfSorted(int index, T element)
-        {
+        {   
             if ((index == 0) && (obj[index + 1].CompareTo(element) < 0))
                 return false;
             if (((index > 0) && (index == base.Count - 1)) && (obj[index - 1].CompareTo(element) > 0))

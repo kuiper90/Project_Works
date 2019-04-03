@@ -46,6 +46,7 @@ namespace UnitTest_Works
             Assert.True(arr[2] == "2");
         }
 
+
         [Fact]
         public void ShouldBe_True_InsertNoElement_InsideTheArray()
         {
@@ -68,6 +69,22 @@ namespace UnitTest_Works
             SortedList<string> arr = ArrayFactory();
             var exception = Assert.Throws<Exception>(() => arr.Insert(8, ""));
             Assert.True(exception.Message == "Element is null or empty.");
+        }
+
+        [Fact]
+        public void ShouldBe_True_InsertElement_InvalidIndex()
+        {
+            SortedList<string> arr = ArrayFactory();
+            var exception = Assert.Throws<Exception>(() => arr.Insert(10, "10"));
+            Assert.True(exception.Message == "Invalid index.");
+        }
+
+        [Fact]
+        public void ShouldBe_True_InsertElement_NegativeIndex()
+        {
+            SortedList<string> arr = ArrayFactory();
+            var exception = Assert.Throws<Exception>(() => arr.Insert(-1, "-1"));
+            Assert.True(exception.Message == "Invalid index.");
         }
     }
 }
