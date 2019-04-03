@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Works
 {
-    public class Lists<T>  : IEnumerable<T>
+    public class Lists<T> : IEnumerable<T>
     {
         protected T[] obj;
         private const int capacity = 4;
@@ -14,9 +14,7 @@ namespace Works
             this.obj = new T[capacity];
             this.Count = 0;
         }
-
-        //public IEnumerator<T> GetEnumerator() => new EnumeratorGenerics<T>(this);
-
+      
         public IEnumerator<T> GetEnumerator()
         {
             foreach (T obiect in obj)
@@ -36,17 +34,13 @@ namespace Works
 
         private void IncreaseSizeIfArrayIsFull(int value)
         {
-            if (this.Count + 1 > this.obj.Length)
-            {
-                T[] extendedObj = new T[this.obj.Length * 2];
-                Array.Copy(this.obj, extendedObj, value);
-                this.obj = extendedObj;
-            }
+            if (this.Count + 1 > obj.Length)
+                Array.Resize(ref this.obj, this.obj.Length * 2);
         }
 
-        public int Count { get; set; } = 0;
+        protected bool IsValidIndex(int index) => 0 <= index && index < this.Count;
 
-        private bool IsValidIndex(int index) => 0 <= index && index < this.Count;
+        public int Count { get; set; } = 0;
 
         public T this[int index]
         {
@@ -66,13 +60,21 @@ namespace Works
             return -1;
         }
 
-        public void Insert(int index, T element)
+        public virtual void Insert(int index, T element)
         {
             if (index > this.Count || index < 0)
                 throw new IndexOutOfRangeException("Invalid index: {0} " + index);
             IncreaseSizeIfArrayIsFull(this.Count - index);
             Array.Copy(this.obj, index, this.obj, index + 1, this.Count - index);
             this.obj[index] = element;
+            this.Count++;
+        }
+
+        public static void Swap<U>(ref U a, ref U b)
+        {
+            U temp = a;
+            a = b;
+            b = temp;
         }
 
         public void Clear()
@@ -101,9 +103,6 @@ namespace Works
                 ShiftLeft(index);
         }
 
-        public static bool Equals(T one, T two)
-        {
-            return one.Equals(two);
-        }
+        public static bool Equals(T one, T two) => one.Equals(two);        
     }
 }

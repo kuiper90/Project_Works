@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Works
 {
-    public class SortedList<T> : Lists_version2<T> where T : IComparable<T>
+    public class SortedList<T> : Lists<T> where T : IComparable<T>
     {
         public SortedList() : base()
         {
