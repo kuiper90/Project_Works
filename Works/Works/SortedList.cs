@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections;
+using System.Collections.Generic;
 
 namespace Works
 {
@@ -18,7 +19,8 @@ namespace Works
             base.Insert(index, element);
         }
 
-        private bool CheckIfNullOrEmpty<T>(T element) => ((ReferenceEquals(element, null)) || (element.Equals("")));
+        private bool CheckIfNullOrEmpty<T>(T element) => ((ReferenceEquals(element, "")) || (EqualityComparer<T>.Default.Equals(element, default(T))));
+            // => ((ReferenceEquals(element, null)) || (element.Equals("")));
 
         private bool CheckIfSorted(int index, T element)
         {
