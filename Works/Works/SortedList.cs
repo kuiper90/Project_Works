@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 
 namespace Works
 {
@@ -17,13 +18,15 @@ namespace Works
             base.Insert(index, element);
         }
 
+        private bool CheckIfNullOrEmpty<T>(T element) => ((ReferenceEquals(element, null)) || (element.Equals("")));
+
         private bool CheckIfSorted(int index, T element)
         {
             if ((index == 0) && (obj[index + 1].CompareTo(element) < 0))
                 return false;
-            if ((index == base.Count - 1) && (obj[index - 1].CompareTo(element) > 0))
+            if (((index > 0) && (index == base.Count - 1)) && (obj[index - 1].CompareTo(element) > 0))
                 return false;
-            if ((obj[index - 1].CompareTo(element) > 0) || (obj[index + 1].CompareTo(element) < 0))
+            if ((index > 0) && (obj[index - 1].CompareTo(element) > 0) || (obj[index + 1].CompareTo(element) < 0))
                 return false;
             return true;
         }
@@ -32,21 +35,11 @@ namespace Works
         {
             if (!IsValidIndex(index))
                 throw new Exception("Invalid index.");
+            if (CheckIfNullOrEmpty(element))
+                throw new Exception("Element is null or empty.");
             if (!CheckIfSorted(index, element))
                 throw new Exception("Inserting element would result in an unsorted list.");
             base.Insert(index, element);
-
-            //    if (!IsValidIndex(index))
-            //      throw new IndexOutOfRangeException("Invalid index: {0} " + index);
-            //    if (index > 0)
-            //    {
-            //      if ((obj[index - 1].CompareTo(element) < 0) && (obj[index + 1].CompareTo(element) > 0))
-            //          base.Insert(index, element);
-            //      else
-            //          throw new Exception("Inserting element would result in an unsorted list.");
-            //    }
-            //    else if ((index == 0) && (obj[index + 1].CompareTo(element) > 0))
-            //      base.Insert(index, element);
         }
 
         public new T this[int index]
@@ -60,6 +53,6 @@ namespace Works
                     throw new Exception("Inserting element would result in an unsorted list.");
                 Add(value);
             }
-        }
+        }       
     }
 }

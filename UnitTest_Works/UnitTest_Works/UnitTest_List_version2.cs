@@ -95,6 +95,24 @@ namespace UnitTest_Works
         }
 
         [Fact]
+        public void ShouldBe_True_InsertElement_AtTheBeginning()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            arr.Insert(0, "16");
+            Assert.True(arr[0] == "16");
+            Assert.True(arr[1] == "1");
+        }
+
+        [Fact]
+        public void ShouldBe_True_InsertElement_AtTheEnd()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            arr.Insert(9, "16");
+            Assert.True(arr[8] == "9");
+            Assert.True(arr[9] == "16");
+        }
+
+        [Fact]
         public void ShouldBe_True_SwapTwoStrings()
         {
             string str1 = "3";
@@ -111,6 +129,30 @@ namespace UnitTest_Works
             arr.Remove("3");
             Assert.True(arr[1] == "2");
             Assert.True(arr[2] == "4");
+        }
+
+        [Fact]
+        public void ShouldBe_True_RemoveFirstElement()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            arr.Remove("1");
+            Assert.True(arr[0] == "2");
+        }
+
+        [Fact]
+        public void ShouldBe_True_RemoveLastElement()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            arr.Remove("9");
+            Assert.True(arr[8] == null);
+        }
+
+        [Fact]
+        public void ShouldBe_True_RemoveNoElement()
+        {
+            Lists_version2<string> arr = ArrayFactory();
+            arr.Remove("");
+            Assert.True(arr[0] == "1");
         }
 
         [Fact]

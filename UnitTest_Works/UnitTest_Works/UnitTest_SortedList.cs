@@ -31,8 +31,7 @@ namespace UnitTest_Works
         [Fact]        
         public void ShouldBe_True_InsertElement_ExceptionThrown()
         {
-            SortedList<string> arr = ArrayFactory();
-            //arr.Insert(5, "16");
+            SortedList<string> arr = ArrayFactory();            
             var exception = Assert.Throws<Exception>(() => arr.Insert(5, "16"));
             Assert.True(exception.Message == "Inserting element would result in an unsorted list.");
         }
@@ -44,6 +43,31 @@ namespace UnitTest_Works
             SortedList<string> arr = ArrayFactory();
             arr.Insert(1, "16");
             Assert.True(arr[1] == "16");
+            Assert.True(arr[2] == "2");
+        }
+
+        [Fact]
+        public void ShouldBe_True_InsertNoElement_InsideTheArray()
+        {
+            SortedList<string> arr = ArrayFactory();
+            var exception = Assert.Throws<Exception>(() => arr.Insert(5, ""));
+            Assert.True(exception.Message == "Element is null or empty.");
+        }
+
+        [Fact]
+        public void ShouldBe_True_InsertNoElement_AtTheBeginning()
+        {
+            SortedList<string> arr = ArrayFactory();
+            var exception = Assert.Throws<Exception>(() => arr.Insert(0, ""));
+            Assert.True(exception.Message == "Element is null or empty.");
+        }
+
+        [Fact]
+        public void ShouldBe_True_InsertNoElement_AtTheEnd()
+        {
+            SortedList<string> arr = ArrayFactory();
+            var exception = Assert.Throws<Exception>(() => arr.Insert(8, ""));
+            Assert.True(exception.Message == "Element is null or empty.");
         }
     }
 }

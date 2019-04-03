@@ -103,9 +103,6 @@ namespace Works
                 ShiftLeft(index);
         }
 
-        public static bool Equals(T one, T two)
-        {
-            return one.Equals(two);
-        }
+        public static bool Equals(T one, T two) => one.Equals(two);        
     }
 }
