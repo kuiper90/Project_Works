@@ -1,4 +1,5 @@
-﻿using Works;
+﻿using System;
+using Works;
 using Xunit;
 
 namespace UnitTest_Works
@@ -85,6 +86,15 @@ namespace UnitTest_Works
         }
 
         [Fact]
+        public void ShouldBe_False_ClearArray_IsReadOnly()
+        {
+            Lists<string> arr = ArrayFactory();
+            arr.IsReadOnly = true;
+            var exception = Assert.Throws<NotSupportedException>(() => arr.Clear());
+            Assert.True(exception.Message == "Array is readonly.");
+        }
+
+        [Fact]
         public void ShouldBe_True_InsertElement()
         {
             Lists<string> arr = ArrayFactory();
@@ -110,6 +120,31 @@ namespace UnitTest_Works
             arr.Insert(9, "16");
             Assert.True(arr[8] == "9");
             Assert.True(arr[9] == "16");
+        }
+
+        [Fact]
+        public void ShouldThrow_Exception_Insert_Element_IsReadOnly()
+        {
+            Lists<string> arr = ArrayFactory();
+            arr.IsReadOnly = true;
+            var exception = Assert.Throws<NotSupportedException>(() => arr.Insert(11, "1"));
+            Assert.True(exception.Message == "Array is readonly.");
+        }
+
+        [Fact]
+        public void ShouldThrow_Exception_Insert_Element_InvalidIndex()
+        {
+            Lists<string> arr = ArrayFactory();            
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => arr.Insert(11, "1"));
+            Assert.True(exception.Message == "Specified argument was out of the range of valid values.");
+        }
+
+        [Fact]
+        public void ShouldThrow_Exception_Insert_Element_NegativeIndex()
+        {
+            Lists<string> arr = ArrayFactory();
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => arr.Insert(-1, "-1"));
+            Assert.True(exception.Message == "Specified argument was out of the range of valid values.");
         }
 
         [Fact]
@@ -162,6 +197,41 @@ namespace UnitTest_Works
             arr.RemoveAt(5);
             Assert.True(arr[4] == "5");
             Assert.True(arr[5] == "7");
+        }
+
+        [Fact]
+        public void ShouldBe_True_RemoveElement_AtIndex_IsReadOnly()
+        {
+            Lists<string> arr = ArrayFactory();
+            arr.IsReadOnly = true;
+            var exception = Assert.Throws<NotSupportedException>(() => arr.RemoveAt(1));
+            Assert.True(exception.Message == "Array is readonly.");
+        }
+
+
+        [Fact]
+        public void ShouldBe_True_RemoveElement_AtIndex_NegativeIndex()
+        {
+            Lists<string> arr = ArrayFactory();
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => arr.RemoveAt(-1));
+            Assert.True(exception.Message == "Specified argument was out of the range of valid values.");
+        }
+
+        [Fact]
+        public void ShouldBe_True_RemoveElement_AtIndex_InvalidIndex()
+        {
+            Lists<string> arr = ArrayFactory();
+            var exception = Assert.Throws<ArgumentOutOfRangeException>(() => arr.RemoveAt(11));
+            Assert.True(exception.Message == "Specified argument was out of the range of valid values.");
+        }
+
+        [Fact]
+        public void ShouldBe_True_RemoveElement_IsReadOnly()
+        {
+            Lists<string> arr = ArrayFactory();
+            arr.IsReadOnly = true;
+            var exception = Assert.Throws<NotSupportedException>(() => arr.Remove("1"));
+            Assert.True(exception.Message == "Array is readonly.");
         }
     }
 }

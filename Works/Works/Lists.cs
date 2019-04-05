@@ -13,7 +13,15 @@ namespace Works
         {
             this.obj = new T[capacity];
             this.Count = 0;
+            this.IsReadOnly = false;          
         }
+
+        //public Lists(bool isReadOnly)
+        //{
+        //    this.obj = new T[capacity];
+        //    this.Count = 0;
+        //    this.IsReadOnly = isReadOnly;
+        //}
       
         public IEnumerator<T> GetEnumerator()
         {
@@ -27,10 +35,13 @@ namespace Works
 
         public void Add(T element)
         {
+            if(this.IsReadOnly)
+                throw new NotSupportedException("Array is readonly.");
             IncreaseSizeIfArrayIsFull(this.obj.Length);
             this.obj[this.Count] = element;
             this.Count++;
         }
+        public bool IsReadOnly { get; set; }
 
         private void IncreaseSizeIfArrayIsFull(int value)
         {
@@ -42,7 +53,6 @@ namespace Works
 
         public int Count { get; set; } = 0;
 
-        public bool IsReadOnly { get; }
 
         public T this[int index]
         {
@@ -64,8 +74,10 @@ namespace Works
 
         public virtual void Insert(int index, T element)
         {
+            if (this.IsReadOnly)
+                throw new NotSupportedException("Array is readonly.");
             if (index > this.Count || index < 0)
-                throw new IndexOutOfRangeException("Invalid index: {0} " + index);
+                throw new ArgumentOutOfRangeException();
             IncreaseSizeIfArrayIsFull(this.Count - index);
             Array.Copy(this.obj, index, this.obj, index + 1, this.Count - index);
             this.obj[index] = element;
@@ -81,6 +93,8 @@ namespace Works
 
         public void Clear()
         {
+            if (this.IsReadOnly)
+                throw new NotSupportedException("Array is readonly.");
             for (int i = 0; i < this.Count; i++)
                 this.obj[i] = default(T);
             this.Count = 0;
@@ -96,6 +110,8 @@ namespace Works
 
         public bool Remove(T element)
         {
+            if (this.IsReadOnly)
+                throw new NotSupportedException("Array is readonly.");
             int index = IndexOf(element);
 
             if (IsValidIndex(index))
@@ -108,6 +124,10 @@ namespace Works
 
         public void RemoveAt(int index)
         {
+            if (this.IsReadOnly)
+                throw new NotSupportedException("Array is readonly.");
+            if (!IsValidIndex(index))
+                throw new ArgumentOutOfRangeException();
             if (IsValidIndex(index))
                 ShiftLeft(index);
         }
@@ -119,7 +139,7 @@ namespace Works
             if (obj == null)
                 throw new ArgumentNullException("Array is null.");
             if (objIndex < 0)
-                throw new ArgumentOutOfRangeException("Index is negative.");
+                throw new IndexOutOfRangeException("Index is negative.");
             if (obj.Length - objIndex < Count)
                 throw new ArgumentException("Not enough elements after index in the destination array.");
             for (int i = 0; i < Count; ++i)

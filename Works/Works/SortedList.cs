@@ -10,16 +10,22 @@ namespace Works
         {
         }
 
+        //public SortedList(bool isReadOnly) : base(isReadOnly)
+        //{
+        //}
+
         public new void Add(T element)
         {
+            if (this.IsReadOnly)
+                throw new NotSupportedException("Array is readonly.");
             int index = 0;
-
             while ((index < base.Count) && (obj[index].CompareTo(element) == -1))
                 index++;
             base.Insert(index, element);
         }
 
-        private bool CheckIfNullOrEmpty<T>(T element) => ((ReferenceEquals(element, "")) || (EqualityComparer<T>.Default.Equals(element, default(T))));
+        private bool CheckIfNullOrEmpty<T>(T element) => ((ReferenceEquals(element, "")) || 
+            (EqualityComparer<T>.Default.Equals(element, default(T))));
 
         private bool CheckIfSorted(int index, T element)
         {   
@@ -34,10 +40,12 @@ namespace Works
 
         public override void Insert(int index, T element)
         {
+            if (this.IsReadOnly)
+                throw new NotSupportedException("Array is readonly.");
             if (!IsValidIndex(index))
-                throw new Exception("Invalid index.");
+                throw new ArgumentOutOfRangeException();
             if (CheckIfNullOrEmpty(element))
-                throw new Exception("Element is null or empty.");
+                throw new DoesNotComplyWithSortedState("Element is null or empty.");
             if (!CheckIfSorted(index, element))
                 throw new Exception("Inserting element would result in an unsorted list.");
             base.Insert(index, element);
