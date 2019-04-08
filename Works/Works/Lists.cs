@@ -35,8 +35,7 @@ namespace Works
 
         public void Add(T element)
         {
-            if(this.IsReadOnly)
-                throw new NotSupportedException("Array is readonly.");
+            CheckIfReadOnly();
             IncreaseSizeIfArrayIsFull(this.obj.Length);
             this.obj[this.Count] = element;
             this.Count++;
@@ -49,15 +48,23 @@ namespace Works
                 Array.Resize(ref this.obj, this.obj.Length * 2);
         }
 
-        protected bool IsValidIndex(int index) => 0 <= index && index < this.Count;
+        protected bool IsValidIndex(int index) => 0 <= index && index <= this.Count;
 
         public int Count { get; set; } = 0;
 
-
         public T this[int index]
         {
-            get => obj[index];
-            set => obj[index] = value;
+            get
+            {
+                CheckIfValidIndex(index);
+                return obj[index];
+            }
+            set
+            {
+                CheckIfReadOnly();
+                CheckIfValidIndex(index);
+                Add(value);
+            }
         }
 
         public bool Contains(T element) => IndexOf(element) >= 0;
@@ -74,10 +81,8 @@ namespace Works
 
         public virtual void Insert(int index, T element)
         {
-            if (this.IsReadOnly)
-                throw new NotSupportedException("Array is readonly.");
-            if (index > this.Count || index < 0)
-                throw new ArgumentOutOfRangeException();
+            CheckIfReadOnly();
+            CheckIfValidIndex(index);
             IncreaseSizeIfArrayIsFull(this.Count - index);
             Array.Copy(this.obj, index, this.obj, index + 1, this.Count - index);
             this.obj[index] = element;
@@ -93,8 +98,7 @@ namespace Works
 
         public void Clear()
         {
-            if (this.IsReadOnly)
-                throw new NotSupportedException("Array is readonly.");
+            CheckIfReadOnly();
             for (int i = 0; i < this.Count; i++)
                 this.obj[i] = default(T);
             this.Count = 0;
@@ -102,16 +106,14 @@ namespace Works
 
         private void ShiftLeft(int index)
         {
-            if (!IsValidIndex(index))
-                throw new IndexOutOfRangeException("Invalid index: {0} " + index);
+            CheckIfValidIndex(index);
             Array.Copy(this.obj, index + 1, this.obj, index, this.Count - index);
             this.Count--;
         }
 
         public bool Remove(T element)
         {
-            if (this.IsReadOnly)
-                throw new NotSupportedException("Array is readonly.");
+            CheckIfReadOnly();
             int index = IndexOf(element);
 
             if (IsValidIndex(index))
@@ -124,10 +126,8 @@ namespace Works
 
         public void RemoveAt(int index)
         {
-            if (this.IsReadOnly)
-                throw new NotSupportedException("Array is readonly.");
-            if (!IsValidIndex(index))
-                throw new ArgumentOutOfRangeException();
+            CheckIfReadOnly();
+            CheckIfValidIndex(index);
             if (IsValidIndex(index))
                 ShiftLeft(index);
         }
@@ -140,10 +140,27 @@ namespace Works
                 throw new ArgumentNullException("Array is null.");
             if (objIndex < 0)
                 throw new IndexOutOfRangeException("Index is negative.");
-            if (obj.Length - objIndex < Count)
-                throw new ArgumentException("Not enough elements after index in the destination array.");
+            CheckCount(obj, objIndex);
             for (int i = 0; i < Count; ++i)
                 obj[i + objIndex] = this[i];
+        }
+
+        protected void CheckCount(T[] obj, int objIndex)
+        {
+            if (obj.Length - objIndex < Count)
+                throw new ArgumentException("Not enough elements after index in the destination array.");
+        }
+
+        protected void CheckIfReadOnly()
+        {
+            if (this.IsReadOnly)
+                throw new NotSupportedException("Array is readonly.");
+        }
+
+        protected void CheckIfValidIndex(int index)
+        {
+            if (!IsValidIndex(index))
+                throw new ArgumentOutOfRangeException(null, "Invalid index.");
         }
     }
 }

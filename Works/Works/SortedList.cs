@@ -16,52 +16,62 @@ namespace Works
 
         public new void Add(T element)
         {
-            if (this.IsReadOnly)
-                throw new NotSupportedException("Array is readonly.");
+            base.CheckIfReadOnly();
             int index = 0;
             while ((index < base.Count) && (obj[index].CompareTo(element) == -1))
                 index++;
             base.Insert(index, element);
         }
 
-        private bool CheckIfNullOrEmpty<T>(T element) => ((ReferenceEquals(element, "")) || 
+        private bool IsNullOrEmpty<T>(T element) => ((ReferenceEquals(element, "")) || 
             (EqualityComparer<T>.Default.Equals(element, default(T))));
 
-        private bool CheckIfSorted(int index, T element)
+        private bool IsSorted(int index, T element)
         {   
             if ((index == 0) && (obj[index + 1].CompareTo(element) < 0))
                 return false;
-            if (((index > 0) && (index == base.Count - 1)) && (obj[index - 1].CompareTo(element) > 0))
+            if (((index > 0) && (index == base.Count)) && (obj[index - 1].CompareTo(element) > 0))
                 return false;
-            if ((index > 0) && (obj[index - 1].CompareTo(element) > 0) || (obj[index + 1].CompareTo(element) < 0))
+            if (((0 < index ) && (index < base.Count)) && ((obj[index - 1].CompareTo(element) > 0  || (obj[index + 1].CompareTo(element) < 0))))
                 return false;
-            return true;
+        return true;
         }
 
         public override void Insert(int index, T element)
         {
-            if (this.IsReadOnly)
-                throw new NotSupportedException("Array is readonly.");
-            if (!IsValidIndex(index))
-                throw new ArgumentOutOfRangeException();
-            if (CheckIfNullOrEmpty(element))
-                throw new DoesNotComplyWithSortedState("Element is null or empty.");
-            if (!CheckIfSorted(index, element))
-                throw new Exception("Inserting element would result in an unsorted list.");
+            base.CheckIfReadOnly();
+            base.CheckIfValidIndex(index);
+            CheckIfNullOrEmpty(element);
+            CheckIfSorted(index, element);
             base.Insert(index, element);
         }
 
         public new T this[int index]
         {
-            get => obj[index];
+            get
+            {
+                base.CheckIfValidIndex(index);
+                return obj[index];
+            }
             set
             {
-                if (!IsValidIndex(index))
-                    throw new Exception("Invalid index.");
-                if (!CheckIfSorted(index, value))
-                    throw new Exception("Inserting element would result in an unsorted list.");
+                base.CheckIfReadOnly();
+                base.CheckIfValidIndex(index);
+                CheckIfSorted(index, value);
                 Add(value);
             }
-        }       
+        }
+        
+        private void CheckIfSorted(int index, T element)
+        {
+            if (!IsSorted(index, element))
+                throw new Exception("Inserting element would result in an unsorted list.");
+        }
+
+        private void CheckIfNullOrEmpty(T element)
+        {
+            if (IsNullOrEmpty(element))
+                throw new DoesNotComplyWithSortedState("Element is null or empty.");
+        }
     }
 }

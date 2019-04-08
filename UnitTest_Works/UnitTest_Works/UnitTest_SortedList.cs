@@ -34,9 +34,36 @@ namespace UnitTest_Works
         {
             SortedList<string> arr = ArrayFactory();
             arr.IsReadOnly = true;
-            Action act = () => arr.Add( "11");
+            Action act = () => arr.Add("11");
             var exception = Assert.Throws<NotSupportedException>(act);
             Assert.True(exception.Message == "Array is readonly.");
+        }
+
+        [Fact]
+        public void ShouldBe_False_SetElement_IsReadOnly()
+        {
+            SortedList<string> arr = ArrayFactory();
+            arr.IsReadOnly = true;
+            Action act = () => arr[1] = "11";
+            var exception = Assert.Throws<NotSupportedException>(act);
+            Assert.True(exception.Message == "Array is readonly.");
+        }
+
+        [Fact]
+        public void ShouldBe_False_AddElement_First()
+        {
+            Lists<string> arr = ArrayFactory();           
+            var exception = Assert.Throws<Exception>(() => arr.Insert(1, "90"));
+            Assert.False(arr[1] == "90");
+            Assert.True(exception.Message == "Inserting element would result in an unsorted list.");
+        }
+
+        [Fact]
+        public void ShouldBe_True_AddElement_Last()
+        {
+            SortedList<string> arr = ArrayFactory();
+            arr.Insert(9, "90");
+            Assert.True(arr[9] == "90");
         }
 
         [Fact]
@@ -102,7 +129,7 @@ namespace UnitTest_Works
         {
             SortedList<string> arr = ArrayFactory();
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() => arr.Insert(-1, "-1"));
-            Assert.True(exception.Message == "Specified argument was out of the range of valid values.");
+            Assert.True(exception.Message == "Invalid index.");
         }
 
         [Fact]
@@ -118,7 +145,7 @@ namespace UnitTest_Works
         {
             SortedList<string> arr = ArrayFactory();
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() => arr.Insert(10, "10"));
-            Assert.True(exception.Message == "Specified argument was out of the range of valid values.");
+            Assert.True(exception.Message == "Invalid index.");
         }
 
         [Fact]

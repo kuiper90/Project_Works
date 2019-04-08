@@ -49,7 +49,7 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_ArrayContainsNumber()
+        public void ShouldBe_True_ArrayContainsString()
         {
             Lists<string> arr = ArrayFactory();
             Assert.True(arr.Contains("1") == true);
@@ -75,6 +75,32 @@ namespace UnitTest_Works
             Lists<string> arr = ArrayFactory();
             arr.Add("-1");
             Assert.True(arr[arr.Count - 1] == "-1");
+        }
+
+        [Fact]
+        public void ShouldBe_False_AddElement_First()
+        {
+            Lists<string> arr = ArrayFactory();
+            arr.Insert(1, "90");
+            Assert.True(arr[1] == "90");
+        }
+
+        [Fact]
+        public void ShouldBe_True_AddElement_Last()
+        {
+            Lists<string> arr = ArrayFactory();
+            arr.Insert(9, "90");
+            Assert.True(arr[9] == "90");
+        }
+
+        [Fact]
+        public void ShouldBe_False_SetElement_IsReadOnly()
+        {
+            Lists<string> arr = ArrayFactory();
+            arr.IsReadOnly = true;
+            Action act = () => arr[1] = "11";
+            var exception = Assert.Throws<NotSupportedException>(act);
+            Assert.True(exception.Message == "Array is readonly.");
         }
 
         [Fact]
@@ -136,7 +162,7 @@ namespace UnitTest_Works
         {
             Lists<string> arr = ArrayFactory();            
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() => arr.Insert(11, "1"));
-            Assert.True(exception.Message == "Specified argument was out of the range of valid values.");
+            Assert.True(exception.Message == "Invalid index.");
         }
 
         [Fact]
@@ -144,7 +170,7 @@ namespace UnitTest_Works
         {
             Lists<string> arr = ArrayFactory();
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() => arr.Insert(-1, "-1"));
-            Assert.True(exception.Message == "Specified argument was out of the range of valid values.");
+            Assert.True(exception.Message == "Invalid index.");
         }
 
         [Fact]
@@ -210,19 +236,19 @@ namespace UnitTest_Works
 
 
         [Fact]
-        public void ShouldBe_True_RemoveElement_AtIndex_NegativeIndex()
+        public void ShouldBe_True_RemoveElement_AtNegativeIndex()
         {
             Lists<string> arr = ArrayFactory();
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() => arr.RemoveAt(-1));
-            Assert.True(exception.Message == "Specified argument was out of the range of valid values.");
+            Assert.True(exception.Message == "Invalid index.");
         }
 
         [Fact]
-        public void ShouldBe_True_RemoveElement_AtIndex_InvalidIndex()
+        public void ShouldBe_True_RemoveElement_AtInvalidIndex()
         {
             Lists<string> arr = ArrayFactory();
             var exception = Assert.Throws<ArgumentOutOfRangeException>(() => arr.RemoveAt(11));
-            Assert.True(exception.Message == "Specified argument was out of the range of valid values.");
+            Assert.True(exception.Message == "Invalid index.");
         }
 
         [Fact]
