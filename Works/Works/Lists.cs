@@ -15,14 +15,7 @@ namespace Works
             this.Count = 0;
             this.IsReadOnly = false;          
         }
-
-        //public Lists(bool isReadOnly)
-        //{
-        //    this.obj = new T[capacity];
-        //    this.Count = 0;
-        //    this.IsReadOnly = isReadOnly;
-        //}
-      
+     
         public IEnumerator<T> GetEnumerator()
         {
             foreach (T obiect in obj)

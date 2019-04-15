@@ -10,10 +10,6 @@ namespace Works
         {
         }
 
-        //public SortedList(bool isReadOnly) : base(isReadOnly)
-        //{
-        //}
-
         public new void Add(T element)
         {
             base.CheckIfReadOnly();
