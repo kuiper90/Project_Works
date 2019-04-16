@@ -129,5 +129,25 @@ namespace UnitTest_Works
             lst.CopyTo(arr, 2);
             Assert.True(arr[2] == "1");
         }
+
+        [Fact]
+        public void ShouldBe_True_NoCopyTo_InsufficientElementsArray()
+        {
+            DoubleLinkedList<string> lst = DoubleLinkedListFactory();
+            string[] arr = new string[9];
+            var exception = Record.Exception(() => lst.CopyTo(arr, 3));
+            Assert.IsType(typeof(ArgumentException), exception);
+            Assert.True(exception.Message == "Not enough elements after index in the destination array.");
+        }
+
+        [Fact]
+        public void ShouldBe_True_NoCopyTo_InvalidIndexOfArray()
+        {
+            DoubleLinkedList<string> lst = DoubleLinkedListFactory();
+            string[] arr = new string[3];
+            var exception = Record.Exception(() => lst.CopyTo(arr, 3));
+            Assert.IsType(typeof(ArgumentOutOfRangeException), exception);
+            Assert.True(exception.Message == "Invalid index.");
+        }
     }
 }

@@ -82,14 +82,13 @@ namespace Works
 
         private void CheckIfValidArrayIndex(T[] array, int arrayIndex)
         {
-            if (0 > arrayIndex || arrayIndex > array.Length)
+            if (0 > arrayIndex || arrayIndex >= array.Length)
                 throw new ArgumentOutOfRangeException(null, "Invalid index.");
         }
 
         public void CopyTo(T[] array, int arrayIndex)
         {
-            if (array == null)
-                throw new ArgumentNullException(null, "Destination array is null.");
+            CheckArrayCount(array);
             CheckIfValidArrayIndex(array, arrayIndex);
             CheckArrayCount(array, arrayIndex);
             DoubleLinkedListNode<T> node = this.head;
@@ -102,6 +101,12 @@ namespace Works
                     node = node.next;
                 } while (node.next != null);
             }
+        }
+
+        private static void CheckArrayCount(T[] array)
+        {
+            if (array == null)
+                throw new ArgumentNullException(null, "Destination array is null.");
         }
 
         private void ValidateNode(DoubleLinkedListNode<T> node)
