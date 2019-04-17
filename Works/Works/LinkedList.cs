@@ -268,5 +268,41 @@ namespace Works
             this.head = null;
             size = 0;
         }
+
+        public Node<T> CopyListToList()
+        {
+            Node<T> current = head;
+            Node<T> tmp = current;
+            while (current.next != null)
+            {
+                tmp.content = current.content;
+                tmp.next = current.next;
+                tmp.random = null;
+                current.next = tmp;
+                current = current.next;
+            }
+
+            Node<T> result = head.next;
+            current = head;
+            while (current.next != null)
+            {
+                current.next.random = current.random.next;
+                current = current.next.next;
+            }
+
+            current = head;
+            tmp = head.next;
+            while (current.next != null && tmp.next != null)
+            {
+                current.next = current.next.next;                
+                current = current.next;
+                if (tmp.next != null)
+                {
+                    tmp.next = tmp.next.next;
+                    tmp = tmp.next;
+                }
+            }
+            return result;
+        }
     }
 }

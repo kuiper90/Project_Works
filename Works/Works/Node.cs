@@ -7,6 +7,7 @@ namespace Works
     public class Node<T>
     {
         Node<T> _next;
+        Node<T> _random;
         T _content;
 
         public Node<T> next
@@ -14,6 +15,12 @@ namespace Works
             get => this._next;
             set => this._next = value;
         }
+
+        public Node<T> random
+        {
+            get => this._random;
+            set => this._random = value;
+    }
 
         public T content
         {
