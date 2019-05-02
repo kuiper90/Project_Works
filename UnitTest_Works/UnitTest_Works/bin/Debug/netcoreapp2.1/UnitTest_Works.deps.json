@@ -1,7 +1,7 @@
 {
   "runtimeTarget": {
     "name": ".NETCoreApp,Version=v2.1",
-    "signature": "1f62379aaa8869c0b97fd93483384b205f5e12f3"
+    "signature": "1661dfb1a2bcbd0bda27eb5c133d8d639f3898f4"
   },
   "compilationOptions": {},
   "targets": {
@@ -15,6 +15,18 @@
         },
         "runtime": {
           "UnitTest_Works.dll": {}
+        }
+      },
+      "EntityFramework/6.2.0": {
+        "runtime": {
+          "lib/net45/EntityFramework.SqlServer.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.2.61023.0"
+          },
+          "lib/net45/EntityFramework.dll": {
+            "assemblyVersion": "6.0.0.0",
+            "fileVersion": "6.2.61023.0"
+          }
         }
       },
       "Microsoft.CodeCoverage/16.0.1": {
@@ -1041,6 +1053,7 @@
       },
       "Works/1.0.0": {
         "dependencies": {
+          "EntityFramework": "6.2.0",
           "Microsoft.CSharp": "4.5.0"
         },
         "runtime": {
@@ -1054,6 +1067,13 @@
       "type": "project",
       "serviceable": false,
       "sha512": ""
+    },
+    "EntityFramework/6.2.0": {
+      "type": "package",
+      "serviceable": true,
+      "sha512": "sha512-ptGyXOf26qLrtn+2doAmylIlCxOnBJANwlyyLrXDmqIk9O18IzLWHyxDwwAyhgXkxmbiaA0WNpRy67WRReInBw==",
+      "path": "entityframework/6.2.0",
+      "hashPath": "entityframework.6.2.0.nupkg.sha512"
     },
     "Microsoft.CodeCoverage/16.0.1": {
       "type": "package",

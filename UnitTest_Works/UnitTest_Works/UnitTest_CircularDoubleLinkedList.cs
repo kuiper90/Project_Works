@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Works;
 using Xunit;
 
@@ -21,7 +22,7 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_AddLastNode()
+        public void AddLastNode_ShoudlBe_True()
         {
             CircularDoubleLinkedList<string> lst = new CircularDoubleLinkedList<string>();
             lst.AddLast("11");
@@ -29,7 +30,7 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_AddFirstNode()
+        public void AddFirstNode_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = new CircularDoubleLinkedList<string>();
             lst.AddFirst("-11");
@@ -47,7 +48,7 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_AddAfterLastNode()
+        public void AddAfterLastNode_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
             CircularLinkedListNode<string> current = lst.FindFirst("9");
@@ -57,14 +58,14 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_ContainsValue()
+        public void ContainsExistentValue_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
             Assert.True(lst.Contains("5"));
         }
 
         [Fact]
-        public void ShouldBe_True_AddEmptyAfterNode()
+        public void AddEmptyAfterNode_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
             CircularLinkedListNode<string> current = lst.FindFirst("3");
@@ -74,7 +75,7 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_AddAfterMidNode()
+        public void AddAfterMidNode_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
             CircularLinkedListNode<string> current = lst.FindFirst("3");
@@ -85,7 +86,7 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_AddEmptyBeforeMidNode()
+        public void AddEmptyBeforeMidNode_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
             CircularLinkedListNode<string> current = lst.FindFirst("2");
@@ -95,18 +96,41 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_AddBeforeNode()
+        public void AddBeforeNode_ShouldBe_True()
         {
-            CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
-            CircularLinkedListNode<string> current = lst.FindLast("5");
-            CircularLinkedListNode<string> newCurrent = new CircularLinkedListNode<string>("20", current.list);
-            lst.AddBefore(current, newCurrent);
-            Assert.True(lst[4] == "20");
-            Assert.True(lst[5] == "5");
+            var lst = new CircularDoubleLinkedList<string> { "1", "2", "3", "2", "1" };
+            lst.AddBefore(lst.FindLast("2"), "3");
+            Assert.Equal("1 3 2 3 2 1".Split(' '), lst);
         }
 
         [Fact]
-        public void ShouldBe_True_DeleteLastNode()
+        public void GetNodeAfterNode_ShouldBe_True()
+        {
+            var lst = new CircularDoubleLinkedList<string> { "1", "2", "3" };
+            IEnumerator<string> e = lst.GetEnumerator();
+            e.MoveNext();
+            Assert.Equal("1", e.Current);
+            e.MoveNext();
+            Assert.Equal("2", e.Current);
+            e.MoveNext();
+            Assert.Equal("3", e.Current);
+        }
+
+        [Fact]
+        public void GetNodeBeforeNode_ShouldBe_True()
+        {
+            var lst = new CircularDoubleLinkedList<string> { "1", "2", "3" };
+            IEnumerator<string> e = lst.GetReverseEnumerator();
+            e.MoveNext();
+            Assert.Equal("3", e.Current);
+            e.MoveNext();
+            Assert.Equal("2", e.Current);
+            e.MoveNext();
+            Assert.Equal("1", e.Current);
+        }
+
+        [Fact]
+        public void DeleteLastNode_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
             lst.RemoveLast();
@@ -115,16 +139,62 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_DeleteFirstNode()
+        public void DeleteFirstNode_ShouldBe_True()
         {
-            CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
-            CircularLinkedListNode<string> current = lst.FindFirst("5");
-            lst.RemoveFirst(current);
-            Assert.True(lst[6] == "8");
+            var lst = new CircularDoubleLinkedList<int> { 1, 2, 3 };
+            lst.RemoveNode(lst.FindFirst(2));
+            Assert.Equal(new[] { 1, 3 }, lst);
         }
 
         [Fact]
-        public void ShouldBe_True_DeleteMidNode()
+        public void RemoveFirst_ShouldDelete_FirstNode()
+        {
+            var lst = new CircularDoubleLinkedList<int> { 1, 2, 3 };
+            Assert.True(lst.RemoveFirst());
+            Assert.Equal(new[] { 2, 3 }, lst);
+        }
+
+        [Fact]
+        public void RemoveFirst_Should_ReturnFalse_EmptyList()
+        {
+            var lst = new CircularDoubleLinkedList<int> { };
+            Assert.False(lst.RemoveFirst());
+        }
+
+        [Fact]
+        public void RemoveLast_ShouldBe_True()
+        {
+            var lst = new CircularDoubleLinkedList<int> { 1, 2, 3 };
+            Assert.True(lst.RemoveLast());
+            Assert.Equal(new[] { 1, 2 }, lst);
+        }
+
+        [Fact]
+        public void CopyList_ToNewList_ShoudlBe_True()
+        {
+            var lst = new CircularDoubleLinkedList<int> { 1, 2, 3, 4, 5 };
+            var random = lst.FindFirst(3);
+
+            var result = new CircularDoubleLinkedList<int>();
+            var current = random;
+            do
+            {
+                result.AddFirst(current.content);
+                current = current.Prev;
+            }
+            while (current != lst.First.Prev);
+            Assert.Equal(new[] { 1, 2, 3 }, result);
+        }
+
+        [Fact]
+        public void RemoveLast_Should_ReturnFalse_EmptyList()
+        {
+            var lst = new CircularDoubleLinkedList<int> { };
+            Assert.False(lst.RemoveLast());
+        }
+
+        [Fact]
+        public void DeleteMidNode_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
             Assert.True(lst.RemoveNode(lst.FindFirst("7")));            
@@ -132,16 +202,25 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_CopyToArray()
+        public void CopyToArray_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
-            string[] arr = new string[11];
+            string[] arr = new string[10];
             lst.CopyTo(arr, 1);
-            Assert.True(arr[2] == "2");
+            Assert.Equal(new [] { null, "1", "2", "3", "4", "5", "6", "7", "8", "9" }, arr);
         }
 
         [Fact]
-        public void ShouldBe_True_NoCopyToNullArray()
+        public void Should_NotCopy_EmptyList()
+        {
+            CircularDoubleLinkedList<string> lst = new CircularDoubleLinkedList<string>();
+            string[] arr = new string[1] { "initial" };
+            lst.CopyTo(arr, 0);
+            Assert.Equal(new string[] { "initial" }, arr);
+        }
+
+        [Fact]
+        public void NoCopyToNullArray_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
             string[] arr = null;
@@ -151,7 +230,7 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_NoCopyTo_InvalidIndexOfArray()
+        public void NoCopyTo_InvalidIndexOfArray_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
             string[] arr = new string[3];                     
@@ -161,7 +240,7 @@ namespace UnitTest_Works
         }
 
         [Fact]
-        public void ShouldBe_True_NoCopyTo_InsufficientElementsArray()
+        public void NoCopyTo_InsufficientElementsArray_ShouldBe_True()
         {
             CircularDoubleLinkedList<string> lst = CircularDoubleLinkedListFactory();
             string[] arr = new string[9];

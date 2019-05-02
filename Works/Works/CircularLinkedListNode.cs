@@ -10,13 +10,13 @@ namespace Works
         CircularDoubleLinkedList<T> _list;
         T _content;
 
-        public CircularLinkedListNode<T> next
+        public CircularLinkedListNode<T> Next
         {
             get => this._next;
             internal set => this._next = value;
         }
     
-        public CircularLinkedListNode<T> prev
+        public CircularLinkedListNode<T> Prev
         {
             get => this._prev;
             internal set => this._prev = value;
@@ -47,8 +47,8 @@ namespace Works
 
         internal CircularLinkedListNode()
         {
-            prev = this;
-            next = this;
+            Prev = this;
+            Next = this;
         }
     }
 }

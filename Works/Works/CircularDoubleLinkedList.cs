@@ -25,9 +25,7 @@ namespace Works
 
         public CircularDoubleLinkedList(IEnumerable<T> collection, IEqualityComparer<T> comparer)
         {
-            if (comparer == null)
-                throw new ArgumentNullException("Comparer is null.");
-            this.comparer = comparer;
+            this.comparer = comparer ?? throw new ArgumentNullException("Comparer is null.");
             if (collection != null)
             {
                 foreach (T item in collection)
@@ -39,15 +37,15 @@ namespace Works
 
         bool ICollection<T>.IsReadOnly { get => false; }
 
-        public CircularLinkedListNode<T> First { get => head; }
+        public CircularLinkedListNode<T> First { get => head.Next; }
 
         public CircularLinkedListNode<T> Last
         {
-            get => head.prev;
-            set => head.prev = value;
+            get => head.Prev;
+            set => head.Prev = value;
         }
 
-        void ICollection<T>.Add(T content)
+        public void Add(T content)
         {
             this.AddLast(content);
         }
@@ -65,9 +63,9 @@ namespace Works
             get
             {
                 CheckIfValidIndex(index);
-                CircularLinkedListNode<T> node = First.next;
+                CircularLinkedListNode<T> node = First;
                 for (int i = 0; i < index; i++)
-                    node = node.next;
+                    node = node.Next;
                 return node.content;
             }
         }
@@ -81,11 +79,12 @@ namespace Works
         }
 
         private void AddNode(CircularLinkedListNode<T> node, CircularLinkedListNode<T> newNode)
-        {            
-            newNode.next = node;
-            newNode.prev = node.prev;
-            node.prev.next = newNode;
-            node.prev = newNode;
+        {
+            newNode.Next = node;
+            newNode.Prev = node.Prev;
+            node.Prev.Next = newNode;
+            node.Prev = newNode;
+            node.list = this;
             size++;
         }
 
@@ -93,11 +92,10 @@ namespace Works
         {
             ValidateNode(node);
             AddNode(head, node);
-            node.list = this;
         }
 
         public CircularLinkedListNode<T> AddLast(T content)
-        {   
+        {
             CircularLinkedListNode<T> newNode = new CircularLinkedListNode<T>(content, this);
             AddNode(head, newNode);
             return newNode;
@@ -106,14 +104,13 @@ namespace Works
         public void AddFirst(CircularLinkedListNode<T> node)
         {
             ValidateNode(node);
-            AddNode(head.next, node);
-            node.list = this;
+            AddNode(head.Next, node);
         }
 
         public CircularLinkedListNode<T> AddFirst(T content)
         {
             CircularLinkedListNode<T> node = new CircularLinkedListNode<T>(content, this);
-            AddNode(head.next, node);
+            AddNode(head.Next, node);
             return node;
         }
 
@@ -130,23 +127,21 @@ namespace Works
             ValidateNode(node);
             ValidateNode(newNode);
             AddNode(node, newNode);
-            newNode.list = this;
         }
 
         public CircularLinkedListNode<T> AddAfter(CircularLinkedListNode<T> node, T content)
         {
             ValidateNode(node);
-            CircularLinkedListNode<T> newNode = new CircularLinkedListNode<T>(content, node.list);            
-            AddNode(node.next, newNode);
+            CircularLinkedListNode<T> newNode = new CircularLinkedListNode<T>(content, node.list);
+            AddNode(node.Next, newNode);
             return newNode;
         }
 
         public void AddAfter(CircularLinkedListNode<T> node, CircularLinkedListNode<T> newNode)
         {
-            ValidateNode(node);            
+            ValidateNode(node);
             ValidateNode(newNode);
-            AddNode(node.next, newNode);
-            newNode.list = this;
+            AddNode(node.Next, newNode);
         }
 
         private void CheckNullNode(CircularLinkedListNode<T> node)
@@ -159,15 +154,15 @@ namespace Works
         {
             if (head == null)
                 return false;
-            CircularLinkedListNode<T> one = head.next;
+            CircularLinkedListNode<T> one = head.Next;
             CircularLinkedListNode<T> two = head;
 
-            while (one != null && one.next != null && two != null)
+            while (one != null && one.Next != null && two != null)
             {
                 if (one == two)
                     return true;
-                one = one.next.next;
-                two = two.next;
+                one = one.Next.Next;
+                two = two.Next;
             }
             return false;
         }
@@ -178,14 +173,13 @@ namespace Works
                 throw new ArgumentNullException(null, "Destination array is null.");
             CheckIfValidArrayIndex(array, arrayIndex);
             CheckArrayCount(array, arrayIndex);
-            CircularLinkedListNode<T> node = First.next;
+            CircularLinkedListNode<T> node = head.Next;
 
-            if (node != null)
-                do
-                {
-                    array[arrayIndex++] = node.content;
-                    node = node.next;
-                } while (node != First);
+            while (node != head)
+            {
+                array[arrayIndex++] = node.content;
+                node = node.Next;
+            }
         }
 
         private void CheckIfValidArrayIndex(T[] array, int arrayIndex)
@@ -202,44 +196,28 @@ namespace Works
 
         public IEnumerator<T> GetEnumerator()
         {
-            CircularLinkedListNode<T> current = head;
+            foreach (var current in GetNodeEnumerator(1))
+                yield return current.content;
+        }
 
-            if (current != null)
+        public IEnumerable<CircularLinkedListNode<T>> GetNodeEnumerator(int tmp)
+        {
+            if (tmp == 1)
             {
-                do
-                {
-                    yield return current.content;
-                    current = current.next;
-                } while (current != head);
+                for (var current = head.Next; current != head; current = current.Next)
+                    yield return current;
+            }
+            else if (tmp == 2)
+            {
+                for (var current = head.Prev; current != head; current = current.Prev)
+                    yield return current;
             }
         }
 
         public IEnumerator<T> GetReverseEnumerator()
         {
-            CircularLinkedListNode<T> current = Last;
-
-            if (current != null)
-            {
-                do
-                {
-                    yield return current.content;
-                    current = current.prev;
-                } while (current != Last);
-            }
-        }
-
-        public IEnumerator<T> GetGenericEnumerator(CircularLinkedListNode<T> node)
-        {
-            CircularLinkedListNode<T> current = node;
-
-            if (current != null)
-            {
-                do
-                {
-                    yield return current.content;
-                    current = current.next;
-                } while (current != node);
-            }
+            foreach (var current in GetNodeEnumerator(2))
+                yield return current.content;
         }
 
         IEnumerator IEnumerable.GetEnumerator()
@@ -257,15 +235,10 @@ namespace Works
 
         private CircularLinkedListNode<T> FindNode(CircularLinkedListNode<T> node, T contentToCompare)
         {
-            CircularLinkedListNode<T> result = null;
-
-            if (comparer.Equals(node.content, contentToCompare))
-                result = node;
-            else if (result == null)
-                { if (node.next != head || node.prev != Last)
-                    result = FindNode(node.next, contentToCompare);
-            }
-            return result;
+            foreach (var current in GetNodeEnumerator(1))
+                if (comparer.Equals(current.content, contentToCompare))
+                    return current;
+            return null;
         }
 
         private void CheckIfHeadIsNull()
@@ -280,9 +253,9 @@ namespace Works
             CircularLinkedListNode<T> node = FindNode(Last, content);
 
             return node;
-        }         
+        }
 
-        public bool Contains(T item) => FindFirst(item) != null;        
+        public bool Contains(T item) => FindFirst(item) != null;
 
         public void Clear()
         {
@@ -300,29 +273,23 @@ namespace Works
 
         public bool RemoveNode(CircularLinkedListNode<T> node)
         {
-            CircularLinkedListNode<T> prevNode = node.prev;
-            prevNode.next = node.next;
-            node.next.prev = node.prev;
+            if (node == head)
+                return false;
+            node.Prev.Next = node.Next;
+            node.Next.Prev = node.Prev;
 
-            if (head == node)
-                head = node.next;
-            else if (Last == node)
-                Last = node.prev;
             size--;
             return true;
         }
 
-        public bool RemoveFirst(CircularLinkedListNode<T> node)
-            => this.RemoveNode(head);
+        public bool RemoveFirst()
+            => this.RemoveNode(First);
 
         public bool RemoveLast() => this.RemoveNode(Last);
 
         public void RemoveAll(T content)
         {
-            do
-            {
-                this.Remove(content);
-            } while (true);
+            head = new CircularLinkedListNode<T>();
         }
     }
 }
