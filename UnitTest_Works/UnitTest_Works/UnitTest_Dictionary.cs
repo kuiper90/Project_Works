@@ -162,7 +162,7 @@ namespace UnitTest_Works
                 dict2.Insert(i.ToString(), "11", true, false);
             long dict2Memory = GC.GetTotalMemory(true) - initialMemory - dict1Memory;
 
-            Assert.True(dict1Memory >= dict2Memory);
+            Assert.True(dict1Memory <= dict2Memory);
         }
     }
 }
