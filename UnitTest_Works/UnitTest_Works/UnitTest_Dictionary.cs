@@ -13,6 +13,7 @@ namespace UnitTest_Works
             Dictionary<int, string> dict = new Dictionary<int, string>(10);
             dict.Add(1, "11");
             Assert.True(dict[1] == "11");
+            var list = dict.Keys;
         }
 
         [Fact]
@@ -112,7 +113,6 @@ namespace UnitTest_Works
             for (int i = 0; i < 10; i++)
                 dict.Add(i, "11");
             Assert.True(dict.GetValueOrDefault(3) == "11");
-
         }
 
         [Fact]
@@ -122,6 +122,47 @@ namespace UnitTest_Works
             for (int i = 0; i < 10; i++)
                 dict.Add(i, "11");
             Assert.True(dict.GetValueOrDefault(33) == null);
+        }
+
+        //https://stackoverflow.com/questions/34119364/why-do-we-need-to-check-hashcode-twice
+        [Fact]
+        public void AddEntry_CheckTime_HashCode()
+        {
+            Dictionary<string, string> dict1 = new Dictionary<string, string>(10);
+            Dictionary<string, string> dict2 = new Dictionary<string, string>(10);
+            var watchCheck = new System.Diagnostics.Stopwatch();
+            var watchNoCheck = new System.Diagnostics.Stopwatch();
+
+            watchCheck.Start();
+            for(int i = 0; i < 999999; i++)
+                dict1.Insert(i.ToString(), "10", true, true);
+            watchCheck.Stop();
+            var execTimeCheck = watchCheck.ElapsedMilliseconds;
+
+            watchNoCheck.Start();
+            for (int i = 0; i < 999999; i++)
+                dict2.Insert(i.ToString(), "11", true, false);
+            watchNoCheck.Stop();
+
+            Assert.True(execTimeCheck <= watchNoCheck.ElapsedMilliseconds);
+        }
+
+        [Fact]
+        public void AddEntry_CheckMem_HashCode()
+        {
+            Dictionary<string, string> dict1 = new Dictionary<string, string>(10);
+            Dictionary<string, string> dict2 = new Dictionary<string, string>(10);
+            long initialMemory = GC.GetTotalMemory(true);
+
+            for (int i = 0; i < 999999; i++)
+                dict1.Insert(i.ToString(), "10", true, true);
+            long dict1Memory = GC.GetTotalMemory(true) - initialMemory;
+
+            for (int i = 0; i < 999999; i++)
+                dict2.Insert(i.ToString(), "11", true, false);
+            long dict2Memory = GC.GetTotalMemory(true) - initialMemory - dict1Memory;
+
+            Assert.True(dict1Memory >= dict2Memory);
         }
     }
 }

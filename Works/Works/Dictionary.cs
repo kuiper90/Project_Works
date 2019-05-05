@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace Works
 {
@@ -17,12 +16,10 @@ namespace Works
 
         private int[] buckets;
         private Entry[] entries;
-        private int size;
+        private int posInUse;
         private int firstFreePosition;
-        private int nrOfUnusedPositions;
+        private int posRemoved;
         private IEqualityComparer<TKey> comp;
-        private List<TKey> keys;
-        private List<TValue> values;
 
         public Dictionary() : this(0, null) { }
 
@@ -52,9 +49,7 @@ namespace Works
 
         //public IEqualityComparer<TKey> Comparer { get => comp; }
 
-        public int Size { get => size; }
-
-        public int Count { get => size - nrOfUnusedPositions; }
+        public int Count { get => posInUse - posRemoved; }
 
         public Entry[] Entries { get => entries; }
 
@@ -69,7 +64,7 @@ namespace Works
             }
             set
             {
-                Insert(key, value, false);
+                Insert(key, value, false, false);
             }
         }
 
@@ -95,14 +90,9 @@ namespace Works
             return keyList;
         }
 
-        ICollection<TKey> IDictionary<TKey, TValue>.Keys
+        public ICollection<TKey> Keys
         {
-            get
-            {
-                if (keys == null)
-                    keys = GetKeyList();
-                return keys;
-            }
+            get => GetKeyList();
         }
 
         private List<TValue> GetValueList()
@@ -118,17 +108,12 @@ namespace Works
 
         ICollection<TValue> IDictionary<TKey, TValue>.Values
         {
-            get
-            {
-                if (values == null)
-                    values = GetValueList();
-                return values;
-            }
+            get => GetValueList();
         }
 
         public void Add(TKey key, TValue value)
         {
-            Insert(key, value, true);
+            Insert(key, value, true, false);
         }
 
         void ICollection<KeyValuePair<TKey, TValue>>.Add(KeyValuePair<TKey, TValue> keyValuePair)
@@ -140,7 +125,7 @@ namespace Works
         {
             int i = FindEntry(keyValuePair.Key);
 
-            return (i >= 0 && EqualityComparer<TValue>.Default.Equals(entries[i].value, keyValuePair.Value)) ? true : false;
+            return i >= 0 && EqualityComparer<TValue>.Default.Equals(entries[i].value, keyValuePair.Value);
         }
 
         bool ICollection<KeyValuePair<TKey, TValue>>.Remove(KeyValuePair<TKey, TValue> keyValuePair)
@@ -157,40 +142,40 @@ namespace Works
 
         public void Clear()
         {
-            if (size > 0)
+            if (posInUse > 0)
             {
                 for (int i = 0; i < buckets.Length; i++)
                     buckets[i] = -1;
-                Array.Clear(entries, 0, size);
+                Array.Clear(entries, 0, posInUse);
                 firstFreePosition = -1;
-                size = 0;
-                nrOfUnusedPositions = 0;
+                posInUse = 0;
+                posRemoved = 0;
             }
         }
 
         public bool ContainsKey(TKey key) => FindEntry(key) >= 0;
 
-        public bool ContainsValue(TValue value)
-        {
-            if (value == null)
-            {
-                for (int i = 0; i < size; i++)
-                {
-                    if ((entries[i].hashCode >= 0) && (entries[i].value == null))
-                        return true;
-                }
-            }
-            else
-            {
-                EqualityComparer<TValue> comp = EqualityComparer<TValue>.Default;
-                for (int i = 0; i < size; i++)
-                {
-                    if ((entries[i].hashCode >= 0) && comp.Equals(entries[i].value, value))
-                        return true;
-                }
-            }
-            return false;
-        }
+        //public bool ContainsValue(TValue value)
+        //{
+        //    if (value == null)
+        //    {
+        //        for (int i = 0; i < posInUse; i++)
+        //        {
+        //            if ((entries[i].hashCode >= 0) && (entries[i].value == null))
+        //                return true;
+        //        }
+        //    }
+        //    else
+        //    {
+        //        EqualityComparer<TValue> comp = EqualityComparer<TValue>.Default;
+        //        for (int i = 0; i < posInUse; i++)
+        //        {
+        //            if ((entries[i].hashCode >= 0) && comp.Equals(entries[i].value, value))
+        //                return true;
+        //        }
+        //    }
+        //    return false;
+        //}
 
         private void CopyTo(KeyValuePair<TKey, TValue>[] array, int index)
         {
@@ -201,18 +186,26 @@ namespace Works
             if (array.Length - index < Count)
                 throw new ArgumentException("Not enough elements after index in the destination array.");
 
-            int size = this.size;
+            int size = this.posInUse;
             Entry[] entries = this.entries;
             for (int i = 0; i < size; i++)
             {
                 if (entries[i].hashCode >= 0)
-                {
-                    array[index++] = new KeyValuePair<TKey, TValue>(entries[i].key, entries[i].value);
-                }
+                    array[index++] = new KeyValuePair<TKey, TValue>(entries[i].key, entries[i].value);                
             }
         }
 
         IEnumerator<KeyValuePair<TKey, TValue>> IEnumerable<KeyValuePair<TKey, TValue>>.GetEnumerator()
+        {
+            int i = 0;
+            do
+            {
+                yield return new KeyValuePair<TKey, TValue>(entries[i].key, entries[i].value);
+                i++;
+            } while (i < entries.Length);
+        }
+
+        IEnumerator IEnumerable.GetEnumerator()
         {
             int i = 0;
             do
@@ -228,7 +221,7 @@ namespace Works
                 throw new ArgumentNullException(null, "Key is null.");
             if (buckets != null)
             {
-                int hashCode = comp.GetHashCode(key) & 0x7FFFFFFF;
+                int hashCode = Math.Abs(comp.GetHashCode(key));
                 int i = buckets[hashCode % buckets.Length];
                 while (i >= 0)
                 {
@@ -250,45 +243,56 @@ namespace Works
             firstFreePosition = -1;
         }
 
-        private void Insert(TKey key, TValue value, bool add)
+        public void Insert(TKey key, TValue value, bool add, bool execFlag)
         {
-
             if (key == null)
                 throw new ArgumentNullException(null, "Key is null.");
 
             if (buckets == null)
                 Initialize(0);
-            int hashCode = comp.GetHashCode(key) & 0x7FFFFFFF;
+            int hashCode = Math.Abs(comp.GetHashCode(key));
             int destBucket = hashCode % buckets.Length;
 
             for (int i = buckets[destBucket]; i >= 0; i = entries[i].next)
             {
-                if (entries[i].hashCode == hashCode && comp.Equals(entries[i].key, key))
+                if (execFlag)
                 {
-                    if (add)
-                        throw new ArgumentException("Adding duplicate.");
-                    entries[i].value = value;
-                    return;
+                    if (entries[i].hashCode == hashCode && comp.Equals(entries[i].key, key))
+                    {
+                        if (add)
+                            throw new ArgumentException("Adding duplicate.");
+                        entries[i].value = value;
+                        return;
+                    }
+                }
+                else
+                {
+                    if (comp.Equals(entries[i].key, key))
+                    {
+                        if (add)
+                            throw new ArgumentException("Adding duplicate.");
+                        entries[i].value = value;
+                        return;
+                    }
                 }
             }
             int index;
-            if (nrOfUnusedPositions > 0)
+            if (posRemoved > 0)
             {
                 index = firstFreePosition;
                 firstFreePosition = entries[index].next;
-                nrOfUnusedPositions--;
+                posRemoved--;
             }
             else
             {
-                if (size == entries.Length)
+                if (posInUse == entries.Length)
                 {
                     Resize();
                     destBucket = hashCode % buckets.Length;
                 }
-                index = size;
-                size++;
+                index = posInUse;
+                posInUse++;
             }
-
             entries[index].hashCode = hashCode;
             entries[index].next = buckets[destBucket];
             entries[index].key = key;
@@ -298,12 +302,12 @@ namespace Works
 
         private void Resize()
         {
-            Resize(ExpandPrime(size), false);
+            Resize(ExpandPrime(posInUse));
         }
 
-        private void Resize(int newSize, bool forceNewHashCodes)
+        private void Resize(int newSize)
         {
-            if (newSize >= entries.Length)
+            if (newSize < entries.Length)
                 throw new ArgumentException("New size not long enough.");
             int[] newBuckets = new int[newSize];
 
@@ -312,18 +316,8 @@ namespace Works
 
             Entry[] newEntries = new Entry[newSize];
 
-            Array.Copy(entries, 0, newEntries, 0, size);
-            if (forceNewHashCodes)
-            {
-                for (int i = 0; i < size; i++)
-                {
-                    if (newEntries[i].hashCode != -1)
-                    {
-                        newEntries[i].hashCode = (comp.GetHashCode(newEntries[i].key) & 0x7FFFFFFF);
-                    }
-                }
-            }
-            for (int i = 0; i < size; i++)
+            Array.Copy(entries, 0, newEntries, 0, posInUse);
+            for (int i = 0; i < posInUse; i++)
             {
                 if (newEntries[i].hashCode >= 0)
                 {
@@ -340,30 +334,25 @@ namespace Works
         {
             if (key == null)
                 throw new ArgumentNullException(null, "Key is null.");
-
             if (buckets != null)
             {
-                int hashCode = comp.GetHashCode(key) & 0x7FFFFFFF;
+                int hashCode = Math.Abs(comp.GetHashCode(key));
                 int currentBucket = hashCode % buckets.Length;
                 int last = -1;
                 for (int i = buckets[currentBucket]; i >= 0; last = i, i = entries[i].next)
                 {
                     if (entries[i].hashCode == hashCode && comp.Equals(entries[i].key, key))
                     {
-                        if (last < 0)
-                        {
+                        if (last < 0)                       
                             buckets[currentBucket] = entries[i].next;
-                        }
                         else
-                        {
                             entries[last].next = entries[i].next;
-                        }
                         entries[i].hashCode = -1;
                         entries[i].next = firstFreePosition;
                         entries[i].key = default(TKey);
                         entries[i].value = default(TValue);
                         firstFreePosition = i;
-                        nrOfUnusedPositions++;
+                        posRemoved++;
                         return true;
                     }
                 }
@@ -401,11 +390,6 @@ namespace Works
         void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int index)
         {
             CopyTo(array, index);
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            throw new NotImplementedException();
         }
 
         private int ExpandPrime(int sizeOne)
