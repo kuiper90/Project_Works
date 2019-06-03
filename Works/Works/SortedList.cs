@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Works
@@ -19,7 +18,7 @@ namespace Works
             base.Insert(index, element);
         }
 
-        private bool IsNullOrEmpty<T>(T element) => ((ReferenceEquals(element, "")) || 
+        private bool IsNullOrEmpty(T element) => ((ReferenceEquals(element, "")) || 
             (EqualityComparer<T>.Default.Equals(element, default(T))));
 
         private bool IsSorted(int index, T element)

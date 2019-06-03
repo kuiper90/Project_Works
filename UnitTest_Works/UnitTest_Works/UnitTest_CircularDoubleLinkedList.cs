@@ -157,7 +157,7 @@ namespace UnitTest_Works
         [Fact]
         public void RemoveFirst_Should_ReturnFalse_EmptyList()
         {
-            var lst = new CircularDoubleLinkedList<int> { };
+            var lst = new CircularDoubleLinkedList<int>();
             Assert.False(lst.RemoveFirst());
         }
 

@@ -16,7 +16,7 @@ namespace Works
 
         private int[] buckets;
         private Entry[] entries;
-        private int posInUse;
+        private int lastAddedElementIndex;
         private int firstFreePosition;
         private int posRemoved;
         private IEqualityComparer<TKey> comp;
@@ -49,7 +49,7 @@ namespace Works
 
         //public IEqualityComparer<TKey> Comparer { get => comp; }
 
-        public int Count { get => posInUse - posRemoved; }
+        public int Count { get => lastAddedElementIndex - posRemoved; }
 
         public Entry[] Entries { get => entries; }
 
@@ -85,7 +85,8 @@ namespace Works
 
             foreach (Entry entry in entries)
             {
-                keyList.Add(entry.key);
+                if (entry.hashCode != -1)
+                    keyList.Add(entry.key);
             }
             return keyList;
         }
@@ -101,7 +102,8 @@ namespace Works
 
             foreach (Entry entry in entries)
             {
-                valueList.Add(entry.value);
+                if (entry.hashCode != -1)
+                    valueList.Add(entry.value);
             }
             return valueList;
         }
@@ -142,13 +144,13 @@ namespace Works
 
         public void Clear()
         {
-            if (posInUse > 0)
+            if (lastAddedElementIndex > 0)
             {
                 for (int i = 0; i < buckets.Length; i++)
                     buckets[i] = -1;
-                Array.Clear(entries, 0, posInUse);
+                Array.Clear(entries, 0, lastAddedElementIndex);
                 firstFreePosition = -1;
-                posInUse = 0;
+                lastAddedElementIndex = 0;
                 posRemoved = 0;
             }
         }
@@ -186,12 +188,12 @@ namespace Works
             if (array.Length - index < Count)
                 throw new ArgumentException("Not enough elements after index in the destination array.");
 
-            int size = this.posInUse;
+            int size = this.lastAddedElementIndex;
             Entry[] entries = this.entries;
             for (int i = 0; i < size; i++)
             {
                 if (entries[i].hashCode >= 0)
-                    array[index++] = new KeyValuePair<TKey, TValue>(entries[i].key, entries[i].value);                
+                    array[index++] = new KeyValuePair<TKey, TValue>(entries[i].key, entries[i].value);
             }
         }
 
@@ -200,7 +202,8 @@ namespace Works
             int i = 0;
             do
             {
-                yield return new KeyValuePair<TKey, TValue>(entries[i].key, entries[i].value);
+                if (entries[i].hashCode != -1)
+                    yield return new KeyValuePair<TKey, TValue>(entries[i].key, entries[i].value);
                 i++;
             } while (i < entries.Length);
         }
@@ -210,7 +213,8 @@ namespace Works
             int i = 0;
             do
             {
-                yield return new KeyValuePair<TKey, TValue>(entries[i].key, entries[i].value);
+                if (entries[i].hashCode != -1)
+                    yield return new KeyValuePair<TKey, TValue>(entries[i].key, entries[i].value);
                 i++;
             } while (i < entries.Length);
         }
@@ -285,13 +289,13 @@ namespace Works
             }
             else
             {
-                if (posInUse == entries.Length)
+                if (lastAddedElementIndex == entries.Length)
                 {
                     Resize();
                     destBucket = hashCode % buckets.Length;
                 }
-                index = posInUse;
-                posInUse++;
+                index = lastAddedElementIndex;
+                lastAddedElementIndex++;
             }
             entries[index].hashCode = hashCode;
             entries[index].next = buckets[destBucket];
@@ -302,7 +306,7 @@ namespace Works
 
         private void Resize()
         {
-            Resize(PrimeNumbers.ExpandPrime(posInUse));
+            Resize(PrimeNumbers.ExpandPrime(lastAddedElementIndex));
         }
 
         private void Resize(int newSize)
@@ -316,8 +320,8 @@ namespace Works
 
             Entry[] newEntries = new Entry[newSize];
 
-            Array.Copy(entries, 0, newEntries, 0, posInUse);
-            for (int i = 0; i < posInUse; i++)
+            Array.Copy(entries, 0, newEntries, 0, lastAddedElementIndex);
+            for (int i = 0; i < lastAddedElementIndex; i++)
             {
                 if (newEntries[i].hashCode >= 0)
                 {
@@ -390,6 +394,6 @@ namespace Works
         void ICollection<KeyValuePair<TKey, TValue>>.CopyTo(KeyValuePair<TKey, TValue>[] array, int index)
         {
             CopyTo(array, index);
-        }        
+        }
     }
 }

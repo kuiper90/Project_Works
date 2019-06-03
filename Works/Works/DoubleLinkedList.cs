@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Works
 {
-    public class DoubleLinkedList<T> : ICollection<T>, IReadOnlyCollection<T>, IEnumerable<T>
+    public class DoubleLinkedList<T> : ICollection<T>, IReadOnlyCollection<T>
     {
         DoubleLinkedListNode<T> _head = null;
         DoubleLinkedListNode<T> _tail = null;
