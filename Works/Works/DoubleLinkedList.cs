@@ -7,8 +7,11 @@ namespace Works
     public class DoubleLinkedList<T> : ICollection<T>, IReadOnlyCollection<T>
     {
         DoubleLinkedListNode<T> _head = null;
+
         DoubleLinkedListNode<T> _tail = null;
+
         int size = 0;
+
         readonly IEqualityComparer<T> comparer;
 
         public DoubleLinkedListNode<T> head
