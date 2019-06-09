@@ -1,6 +1,7 @@
 D:\Git\Project_Works\Works\Works\bin\Debug\netstandard2.0\Works.deps.json
 D:\Git\Project_Works\Works\Works\bin\Debug\netstandard2.0\Works.dll
 D:\Git\Project_Works\Works\Works\bin\Debug\netstandard2.0\Works.pdb
+D:\Git\Project_Works\Works\Works\obj\Debug\netstandard2.0\Works.csprojAssemblyReference.cache
 D:\Git\Project_Works\Works\Works\obj\Debug\netstandard2.0\Works.csproj.CoreCompileInputs.cache
 D:\Git\Project_Works\Works\Works\obj\Debug\netstandard2.0\Works.AssemblyInfoInputs.cache
 D:\Git\Project_Works\Works\Works\obj\Debug\netstandard2.0\Works.AssemblyInfo.cs

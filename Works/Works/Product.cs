@@ -14,8 +14,11 @@ namespace Works
             List<Product> listOfProductsWithAtLeastOneGivenFeature =
                productList
                             .Where(prod => prod.Features.Any(
-                                feat => featureList.Select(
-                                    f => f.Id).Contains(feat.Id))).ToList();
+                                feat => featureList
+                                .Select(
+                                    f => f.Id)
+                                    .Contains(feat.Id)))
+                                    .ToList();
             return listOfProductsWithAtLeastOneGivenFeature;
         }
 
@@ -42,7 +45,9 @@ namespace Works
             List<Product> listOfProductsWithAllGivenFeatures =
                 productList
                             .Where(prod => featureList.All(feat => prod.Features
-                                .Select(f => f.Id).Contains(feat.Id))).ToList();
+                                .Select(f => f.Id)
+                                .Contains(feat.Id)))
+                                .ToList();
             return listOfProductsWithAllGivenFeatures;
         }
 
@@ -51,8 +56,11 @@ namespace Works
             List<Product> listOfProductsWithNoGivenFeature =
                 productList
                             .Where(prod => featureList.All(
-                                feat => !prod.Features.Select(
-                                    f => f.Id).Contains(feat.Id))).ToList();
+                                feat => !prod.Features
+                                .Select(
+                                    f => f.Id)
+                                    .Contains(feat.Id)))
+                                    .ToList();
             return listOfProductsWithNoGivenFeature;
         }
     }
