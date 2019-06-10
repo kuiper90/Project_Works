@@ -113,9 +113,7 @@ namespace Works
                 throw new ArgumentNullException("selector");
             Dictionary<TKey, TElement> dict = new Dictionary<TKey, TElement>();
             foreach (TSource current in source)
-            {
-                    dict.Add(keySelector(current), elementSelector(current));
-            }
+                dict.Add(keySelector(current), elementSelector(current));
             return dict;
         }
 

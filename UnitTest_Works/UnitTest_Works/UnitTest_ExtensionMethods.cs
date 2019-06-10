@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Works;
 using Xunit;
@@ -190,7 +191,7 @@ namespace UnitTest_Works
         {
             int[] intArray = new int[] { 5, 6, 7, 8, 9, 10 };
             int[] rez =
-               intArray               
+               intArray
                .Where(x => (x % 2) == 0)
                .Select(x => x)
                .ToArray();
@@ -221,6 +222,51 @@ namespace UnitTest_Works
                 .Select(x => x)
                 .ToArray();
             Assert.True(rez.Length == 0);
+        }
+
+        [Fact]
+        public void ZipQ_OnEmptySets_ShouldReturn_True()
+        {
+            int[] intArrayOne = new int[] {};
+            int[] intArrayTwo = new int[] {};
+            var rez =
+                intArrayOne
+                .ZipQ(intArrayTwo, (arrOne, arrTwo) => (arrOne * arrTwo))
+                .ToArray();
+            Assert.True(rez.Length == 0);
+        }
+
+        [Fact]
+        public void ZipQ_ShouldReturn_True()
+        {
+            int[] intArrayOne = new int[] { 5, 6, 7, 8, 9, 11 };
+            int[] intArrayTwo = new int[] { 5, 6, 7, 8, 9, 11 };
+            var rez =
+                intArrayOne
+                .ZipQ(intArrayTwo, (arrOne, arrTwo) => arrOne * arrTwo)
+                .ToArray();
+            Assert.True(rez.Length == 6);
+        }
+
+        [Fact]
+        public void ToDictionaryQ_ShouldSave_KeyValuePairs_ToADict()
+        {
+            int[] intArray = new int[] { 5, 6, 7, 8, 9, 11 };
+            System.Collections.Generic.Dictionary<int, string> dict = intArray
+                .Select(i => new { key = i.GetHashCode(), value = i.ToString() })
+                .ToDictionary(x => x.key, x => x.value);
+            Assert.True(dict.Count() == 6);
+            Assert.True(dict[11] == "11");
+        }
+
+        [Fact]
+        public void ToDictionaryQ_ShouldReturn_True()
+        {
+            int[] intArray = { 13, 122, 43, 54, 79 };
+            System.Collections.Generic.Dictionary<int, string> dict = intArray
+                .ToDictionary(key => key.GetHashCode(), value => (value % 2) == 1 ? "Odd" : "Even");
+            Assert.True(dict.Count() == 5);
+            Assert.True(dict[43] == "Odd");
         }
     }
 }
