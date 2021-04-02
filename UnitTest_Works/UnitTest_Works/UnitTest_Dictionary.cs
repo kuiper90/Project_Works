@@ -123,8 +123,7 @@ namespace UnitTest_Works
                 dict.Add(i, "11");
             Assert.True(dict.GetValueOrDefault(33) == null);
         }
-
-        //https://stackoverflow.com/questions/34119364/why-do-we-need-to-check-hashcode-twice
+        
         [Fact]
         public void AddEntry_CheckTime_HashCode()
         {
